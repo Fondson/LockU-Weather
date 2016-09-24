@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">LockuWeather</string>
+    <string name="toast_unavailable_network_message">Network is unavailable</string>
 </resources>
