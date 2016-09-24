@@ -33,39 +33,45 @@ public class Forecast {
         }
 
         public static int getIconId(String iconString) {
-//            int iconId = R.drawable.clear_day;
-//
-//            if (iconString.equals("clear-day")) {
-//                iconId = R.drawable.clear_day;
-//            }
-//            else if (iconString.equals("clear-night")) {
-//                iconId = R.drawable.clear_night;
-//            }
-//            else if (iconString.equals("rain")) {
-//                iconId = R.drawable.rain;
-//            }
-//            else if (iconString.equals("snow")) {
-//                iconId = R.drawable.snow;
-//            }
-//            else if (iconString.equals("sleet")) {
-//                iconId = R.drawable.sleet;
-//            }
-//            else if (iconString.equals("wind")) {
-//                iconId = R.drawable.wind;
-//            }
-//            else if (iconString.equals("fog")) {
-//                iconId = R.drawable.fog;
-//            }
-//            else if (iconString.equals("cloudy")) {
-//                iconId = R.drawable.cloudy;
-//            }
-//            else if (iconString.equals("partly-cloudy-day")) {
-//                iconId = R.drawable.partly_cloudy;
-//            }
-//            else if (iconString.equals("partly-cloudy-night")) {
-//                iconId = R.drawable.cloudy_night;
-//            }
-            return 0;
+            int iconId = R.drawable.weather_icon1;
+
+            if (Integer.parseInt(iconString) <=2 || Integer.parseInt(iconString) == 30) {
+                iconId = R.drawable.weather_icon1;
+            }
+            else if (Integer.parseInt(iconString) >= 3 && Integer.parseInt(iconString) <= 6) {
+                iconId = R.drawable.weather_icon4;
+            }
+            else if (Integer.parseInt(iconString) >= 7 && Integer.parseInt(iconString) <= 8 ||
+                    Integer.parseInt(iconString) == 32) {
+                iconId = R.drawable.weather_icon3;
+            }
+            else if (Integer.parseInt(iconString) >= 9 && Integer.parseInt(iconString) <= 11 ||
+                    Integer.parseInt(iconString) == 31) {
+                iconId = R.drawable.weather_icon7;
+            }
+            else if (Integer.parseInt(iconString) == 12 || Integer.parseInt(iconString) == 18 ||
+                    Integer.parseInt(iconString) == 39 || Integer.parseInt(iconString) == 40) {
+                iconId = R.drawable.weather_icon5;
+            }
+            else if (Integer.parseInt(iconString) >= 13 && Integer.parseInt(iconString) <= 17 &&
+                    Integer.parseInt(iconString) != 15) {
+                iconId = R.drawable.weather_icon2;
+            }
+            else if (Integer.parseInt(iconString) == 15 || Integer.parseInt(iconString) == 41 ||
+                    Integer.parseInt(iconString) == 42) {
+                iconId = R.drawable.weather_icon9;
+            }
+            else if (Integer.parseInt(iconString) >= 19 && Integer.parseInt(iconString) <= 25 ||
+                    Integer.parseInt(iconString) == 43 || Integer.parseInt(iconString) == 44) {
+                iconId = R.drawable.weather_icon10;
+            }
+            else if (Integer.parseInt(iconString) >= 26 && Integer.parseInt(iconString) <= 29) {
+                iconId = R.drawable.weather_icon11;
+            }
+            else if (Integer.parseInt(iconString) >= 33 && Integer.parseInt(iconString) <= 38) {
+                iconId = R.drawable.weather_icon8;
+            }
+            return iconId;
         }
 
 }

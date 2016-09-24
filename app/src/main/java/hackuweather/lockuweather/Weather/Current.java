@@ -16,7 +16,7 @@ public class Current {
 
 
     public int getTemperature() {
-        return (int) Math.round(((mTemperature - 32)*5)/9);
+        return (int) mTemperature;
     }
 
     public void setTemperature(double temperature) {

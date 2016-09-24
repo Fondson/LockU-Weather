@@ -24,23 +24,25 @@
                 android:id="@+id/lock_time_hr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-condensed"
                 android:layout_gravity="end"
                 android:keepScreenOn="true"
                 android:format24Hour="hh"
                 android:textColor="#ffffff"
-                android:textSize="100sp"
-                android:typeface="normal"/>
+                android:textSize="120sp"
+                android:typeface="normal"
+                android:elegantTextHeight="false" />
 
             <TextClock
                 android:id="@+id/lock_time_min"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
+                android:fontFamily="sans-serif-condensed"
                 android:layout_gravity="end"
                 android:format24Hour="mm"
                 android:keepScreenOn="true"
                 android:textColor="#ffffff"
-                android:textSize="80sp"
+                android:textSize="100sp"
                 android:typeface="normal"
                 android:layout_alignParentTop="true"
                 android:layout_alignTop="@+id/lock_time_hr"
@@ -88,7 +90,7 @@
             android:id="@+id/weatherIcon"
             android:layout_width="100sp"
             android:layout_height="100sp"
-            android:src="@drawable/weather_icon"
+            android:src="@drawable/weather_icon1"
             android:layout_gravity="right|bottom"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true" />
@@ -97,13 +99,14 @@
             android:id="@+id/weatherText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
             android:text="85 F"
             android:textSize="50sp"
             android:textColor="#ffffff"
             android:layout_gravity="center_horizontal|bottom"
             android:gravity="center|end"
             android:layout_toStartOf="@+id/weatherIcon"
-            android:layout_alignTop="@+id/weatherIcon" />
+            android:layout_alignBottom="@+id/weatherIcon" />
 
         <ImageView
             android:id="@+id/unlockArrow"
