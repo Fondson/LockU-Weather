@@ -27,6 +27,8 @@ import android.net.NetworkInfo;
 import android.nfc.Tag;
 import android.os.Build;
 import android.util.Log;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
@@ -86,8 +88,7 @@ public class MainActivity extends AppCompatActivity {
         backDrop.setScaleType(ImageView.ScaleType.FIT_XY);
         clockView.bringToFront();
 
-        mForecast = new Forecast();
-        getCurrent();
+        initializeLocationManager();
     }
 
     protected void onStart() {
