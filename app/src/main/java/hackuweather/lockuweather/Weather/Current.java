@@ -1,11 +1,20 @@
 package hackuweather.lockuweather.Weather;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class Current {
 
     private int mIcon = 0;
     private String mSummary = "";
     private double mTemperature = 0;
     private String mPhotoUrl;
+    private Bitmap mPhotoBitmap;
 
     public int getIcon() {
         return mIcon;
@@ -44,7 +53,15 @@ public class Current {
         return mPhotoUrl;
     }
 
+    public Bitmap getPhotoBitmap() {
+        return mPhotoBitmap;
+    }
+
     public void setPhotoUrl(String photoUrl) {
         mPhotoUrl = photoUrl;
+    }
+
+    public void setPhotoBitmap(Bitmap photoBitmap){
+        mPhotoBitmap = photoBitmap;
     }
 }

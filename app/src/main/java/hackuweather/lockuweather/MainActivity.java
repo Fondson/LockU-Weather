@@ -2,10 +2,13 @@ package hackuweather.lockuweather;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +34,15 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+
 import hackuweather.lockuweather.Weather.Current;
 import hackuweather.lockuweather.Weather.Day;
 import hackuweather.lockuweather.Weather.Forecast;
@@ -161,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
     private void getCurrent() {
         // initialize the api with key and parameters
         String apiKey = "hackuweather2016";
-        String forecastURL = "http://apidev.accuweather.com/currentconditions/v1/"+ "335315" + ".json?apikey=" + apiKey
+        String forecastURL = "http://apidev.accuweather.com/currentconditions/v1/"+ "335315" + ".json?apikey=" + APIKEY
                 + "&getPhotos=true";
 
         if (isNetworkAvailable()) {
@@ -207,7 +218,11 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    updateDisplay();
+                                    try {
+                                        updateDisplay();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             });
                         } else {
@@ -224,9 +239,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void updateDisplay(){
+    private void updateDisplay() throws IOException {
         currentTemp.setText("" + mForecast.getCurrent().getTemperature() + "°C");
         weatherIcon.setImageResource(mForecast.getCurrent().getIconId());
+        backDrop.setImageBitmap(mForecast.getCurrent().getPhotoBitmap());
     }
 
     private Current getCurrentDetails(String jsonData) {
@@ -258,6 +274,8 @@ public class MainActivity extends AppCompatActivity {
             // get the photo url
             String pictureURL = photo.getString("PortraitLink");
             currentWeather.setPhotoUrl(pictureURL);
+            Bitmap bitmap = getBitmapFromURL(pictureURL);
+            currentWeather.setPhotoBitmap(bitmap);
             Log.d(TAG, pictureURL);
 
         } catch (JSONException e) {
@@ -411,5 +429,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return true;
+    }
+
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            // Log exception
+            return null;
+        }
     }
 }
