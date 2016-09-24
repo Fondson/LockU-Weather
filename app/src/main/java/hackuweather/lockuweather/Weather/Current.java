@@ -2,15 +2,16 @@ package hackuweather.lockuweather.Weather;
 
 public class Current {
 
-    private String mIcon = "";
+    private int mIcon = 0;
     private String mSummary = "";
     private double mTemperature = 0;
+    private String mPhotoUrl;
 
-    public String getIcon() {
+    public int getIcon() {
         return mIcon;
     }
 
-    public void setIcon(String icon) {
+    public void setIcon(int icon) {
         mIcon = icon;
     }
 
@@ -38,4 +39,12 @@ public class Current {
 
 
     public Current() {}
+
+    public String getPhotoUrl() {
+        return mPhotoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        mPhotoUrl = photoUrl;
+    }
 }
