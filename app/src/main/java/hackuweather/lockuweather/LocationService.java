@@ -34,7 +34,6 @@ public class LocationService extends Service {
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
                         LOCATION_REFRESH_DISTANCE, mLocationListener);
             }
-            Log.d("longlat", Double.toString(mLatitude) + " " + Double.toString(mLongitude));
         }
         catch (Exception e){
             Log.d("longlat", e.getMessage());
