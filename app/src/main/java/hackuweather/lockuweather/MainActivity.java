@@ -1,7 +1,10 @@
 package hackuweather.lockuweather;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -41,9 +44,9 @@ public class MainActivity extends AppCompatActivity {
     private TextClock lockTimeMin;
     private LinearLayout clockView;
     private ImageView backDrop;
+    private ImageView weatherIcon;
     private FrameLayout overallView;
-    private TextView mLongitudeText;
-    private TextView mLatitudeText;
+    private TextView currentTemp;
 
     private float x1, x2;
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -71,22 +74,15 @@ public class MainActivity extends AppCompatActivity {
         clockView = (LinearLayout) findViewById(R.id.clockView);
         overallView = (FrameLayout) findViewById(R.id.overallView);
         backDrop = (ImageView) findViewById(R.id.weatherBackdrop);
-        mLatitudeText = new TextView(this);
-        mLongitudeText = new TextView(this);
-
-        mLatitudeText.setTextColor(Color.parseColor("#FFFFFF"));
-        mLongitudeText.setTextColor(Color.parseColor("#FFFFFF"));
-        mLatitudeText.setText("Lat");
-        mLongitudeText.setText("Long");
-
-        clockView.addView(mLatitudeText);
-        clockView.addView(mLongitudeText);
+        currentTemp = (TextView) findViewById(R.id.weatherText);
+        weatherIcon = (ImageView) findViewById(R.id.weatherIcon);
 
         backDrop.setImageResource(R.drawable.default_wallpaper);
         backDrop.setScaleType(ImageView.ScaleType.FIT_XY);
-
         clockView.bringToFront();
-        initializeLocationManager();
+
+        mForecast = new Forecast();
+        getCurrent();
     }
 
     protected void onStart() {
@@ -204,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    //updateDisplay();
+                                    updateDisplay();
                                 }
                             });
                         } else {
@@ -219,6 +215,11 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.toast_unavailable_network_message,
                     Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void updateDisplay(){
+        currentTemp.setText("" + mForecast.getCurrent().getTemperature() + "°C");
+        weatherIcon.setImageResource(mForecast.getCurrent().getIconId());
     }
 
     private Current getCurrentDetails(String jsonData) {
