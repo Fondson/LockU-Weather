@@ -32,7 +32,7 @@ public class Forecast {
             mDailyForecast = dailyForecast;
         }
 
-        public static int getIconId(String iconString) {
+        public static int getIconId(int iconInt) {
 //            int iconId = R.drawable.clear_day;
 //
 //            if (iconString.equals("clear-day")) {
