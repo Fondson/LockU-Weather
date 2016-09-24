@@ -36,5 +36,4 @@ public class MainActivity extends AppCompatActivity {
         mGoogleApiClient.disconnect();
         super.onStop();
     }
-
 }
