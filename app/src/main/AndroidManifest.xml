@@ -5,13 +5,17 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/AppTheme.NoActionBar"
         android:launchMode="singleTask">
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -20,6 +24,7 @@
             </intent-filter>
         </activity>
         <service android:name="hackuweather.lockuweather.UpdateService"/>
+        <service android:name="hackuweather.lockuweather.LocationService"/>
         <receiver
             android:name="hackuweather.lockuweather.AutoStart"
             android:enabled="true">
