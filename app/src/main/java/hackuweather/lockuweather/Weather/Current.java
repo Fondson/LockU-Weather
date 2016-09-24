@@ -2,12 +2,9 @@ package hackuweather.lockuweather.Weather;
 
 public class Current {
 
-    private String mIcon;
-    private String mSummary;
-    private long mTime;
-    private double mTemperature;
-    private double mHumidity;
-    private double mPrecipChance;
+    private String mIcon = "";
+    private String mSummary = "";
+    private double mTemperature = 0;
 
     public String getIcon() {
         return mIcon;
@@ -17,13 +14,6 @@ public class Current {
         mIcon = icon;
     }
 
-    public long getTime() {
-        return mTime;
-    }
-
-    public void setTime(long time) {
-        mTime = time;
-    }
 
     public int getTemperature() {
         return (int) Math.round(((mTemperature - 32)*5)/9);
@@ -32,24 +22,6 @@ public class Current {
     public void setTemperature(double temperature) {
         mTemperature = temperature;
     }
-
-    public double getHumidity() {
-        return mHumidity;
-    }
-
-    public void setHumidity(double humidity) {
-        mHumidity = humidity;
-    }
-
-    public double getPrecipChance() {
-        int mPrecipPercentage = (int) Math.round(mPrecipChance * 100);
-        return mPrecipPercentage;
-    }
-
-    public void setPrecipChance(double precipChance) {
-        mPrecipChance = precipChance;
-    }
-
 
     public String getSummary() {
         return mSummary;
@@ -64,4 +36,6 @@ public class Current {
         return Forecast.getIconId(mIcon);
     }
 
+
+    public Current() {}
 }

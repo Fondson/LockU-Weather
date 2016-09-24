@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private double mLongitude;
     private double mLatitude;
 
+    OkHttpClient mOkHttpClient = new OkHttpClient();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 && checkCallingOrSelfPermission("android.permission.INTERNET")!= PackageManager.PERMISSION_GRANTED){
             requestPermissions(NETWORK_PERM, NETWORK_PERM_CODE);
         }
-
+        mForecast = new Forecast();
         getCurrent();
         // initialize a location listener
         mLocationListener = new LocationListener() {
@@ -84,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     private void getCurrent() {
         // initialize the api with key and paramters
         String apiKey = "hackuweather2016";
-        String forecastURL = "http://apidev.accuweather.com/currentconditions/v1/"+ "335315" + ".json?apikey=" + apiKey + "/";
+        String forecastURL = "http://apidev.accuweather.com/currentconditions/v1/"+ "335315" + ".json?apikey=" + apiKey;
 
         if (isNetworkAvailable()) {
             // display refresh animation (i.e. make the animation spin)
@@ -124,7 +126,8 @@ public class MainActivity extends AppCompatActivity {
                         // can't remember what this does
                         if (response.isSuccessful()) {
                             // update the forecast with the details from the
-                            mForecast.setCurrent(getCurrentDetails(jsonData));
+                            Current current = getCurrentDetails(jsonData.substring(1, jsonData.length() -1));
+                            mForecast.setCurrent(current);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -146,85 +149,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Current getCurrentDetails(String jsonData) {
-        Current current = new Current();
+        Current currentWeather = new Current();
         try {
             JSONObject jsonObject = new JSONObject(jsonData);
+
+            // get the weather icon
+            int iconID = jsonObject.getInt("WeatherIcon");
+            currentWeather.setIcon(Integer.toString(iconID));
+            Log.d(TAG, Integer.toString(iconID));
+
+            // get the summary
+            String summary = jsonObject.getString("WeatherText");
+            currentWeather.setSummary(summary);
+            Log.d(TAG, summary);
+
             JSONObject tempJson = jsonObject.getJSONObject("Temperature");
             JSONObject metricJson = tempJson.getJSONObject("Metric");
 
-            Log.d("current", Integer.toString(metricJson.getInt("Value")));
-            current.setTemperature(jsonObject.getInt(""));
+            //get the currentWeather temp
+            int currentTemp = metricJson.getInt("Value");
+            currentWeather.setTemperature(currentTemp);
+            Log.d("currentWeather", Integer.toString(currentTemp));
+
+
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return current;
+        Log.d(TAG, Boolean.toString(currentWeather == null));
+        return currentWeather;
     }
 
-    private void getForecast(double latitude, double longitude) {
-        // initialize the api with key and paramters
-        String apiKey = "hackuweather2016";
-        String forecastURL = "https://apidev.forecast.io/locations/" + apiKey + "/" +
-                latitude + "," + longitude;
-
-        if (isNetworkAvailable()) {
-            // display refresh animation (i.e. make the animation spin)
-            toggleRefresh();
-            // connect to the api using ok http
-            OkHttpClient okHttpClient = new OkHttpClient();
-            Request request = new Request.Builder().url(forecastURL).build();
-            Call call = okHttpClient.newCall(request);
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // turn the animation off
-                            toggleRefresh();
-                        }
-                    });
-                    // display an error message to the user
-                    alertUserAboutError();
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    // if a valid response is relieved
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // turn off the refresh animation
-                            toggleRefresh();
-                        }
-                    });
-                    try {
-                        // store the data from the response
-                        String jsonData = response.body().string();
-                        //Log.v(TAG, response.body().string());
-                        // can't remember what this does
-                        if (response.isSuccessful()) {
-                            // update the forecast with the details from the
-                            //mForecast = parseForecastDetails(jsonData);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    //updateDisplay();
-                                }
-                            });
-                        } else {
-                            alertUserAboutError();
-                        }
-                    } catch (IOException e) {
-                        Log.e(TAG, "COULD NOT CONNECT TO FORECAST API");
-                    }
-                }
-            });
-        } else {
-            Toast.makeText(this, R.string.toast_unavailable_network_message,
-                    Toast.LENGTH_LONG).show();
-        }
-    }
 
     private void alertUserAboutError() {
     }

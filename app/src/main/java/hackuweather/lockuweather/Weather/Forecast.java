@@ -4,7 +4,7 @@ import hackuweather.lockuweather.R;
 
 public class Forecast {
 
-        private Current mCurrent;
+        private Current mCurrent = new Current();
         private Hour[] mHourlyForecast;
         private Day[] mDailyForecast;
 
