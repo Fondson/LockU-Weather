@@ -3,6 +3,7 @@ package hackuweather.lockuweather;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
@@ -45,16 +46,15 @@ public class MainActivity extends AppCompatActivity {
     private TextView mLatitudeText;
 
     private float x1, x2;
-    static final int MIN_DISTANCE = 150;
-
-    private static float LOCATION_REFRESH_DISTANCE = 100;
-    private static long LOCATION_REFRESH_TIME = 2000;
     private static final String TAG = MainActivity.class.getSimpleName();
     private Forecast mForecast;
     private static final int NETWORK_PERM_CODE = 0;
-    private String[] NETWORK_PERM = {"android.permission.ACCESS_NETWORK_STATE", "android.permission.INTERNET"};
+    static final int MIN_DISTANCE = 150;
+    public static String[] NETWORK_PERM = {"android.permission.ACCESS_NETWORK_STATE"
+            , "android.permission.INTERNET"
+            , "android.permission.ACCESS_FINE_LOCATION"
+            , "android.permission.ACCESS_COARSE_LOCATION"};
 
-    private LocationManager mLocationManager;
     private LocationListener mLocationListener;
     private double mLongitude;
     private double mLatitude;
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         backDrop.setScaleType(ImageView.ScaleType.FIT_XY);
 
         clockView.bringToFront();
-
+        initializeLocationManager();
     }
 
     protected void onStart() {
@@ -142,39 +142,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void initializeLocationManager() {
+    private void initializeLocationManager(){
 
+        mForecast = new Forecast();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && checkCallingOrSelfPermission("android.permission.ACCESS_NETWORK_STATE") != PackageManager.PERMISSION_GRANTED
-                && checkCallingOrSelfPermission("android.permission.INTERNET") != PackageManager.PERMISSION_GRANTED) {
+                && !hasPermissions(this,NETWORK_PERM)) {
             requestPermissions(NETWORK_PERM, NETWORK_PERM_CODE);
         }
-        mForecast = new Forecast();
-        getCurrent();
-        // initialize a location listener
-        mLocationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(final Location location) {
-                //your code here
-                mLatitude = location.getLatitude();
-                mLongitude = location.getLongitude();
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-                // display a toast saying gps unavailable
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-                // display a toast saying gps unavailable
-            }
-        };
+        else {
+            getCurrent();
+            // initialize a location listener
+            startService(new Intent(this, LocationService.class));
+        }
     }
 
     private void getCurrent() {
@@ -292,20 +271,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return isAvailable;
     }
-
-    private void initalizeLocationManger() {
-        if (Build.VERSION.SDK_INT >= 23 &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        ;
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
-                LOCATION_REFRESH_DISTANCE, mLocationListener);
-    }
-
     //handles permission requests
     @Override
     public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults) {
@@ -313,10 +278,22 @@ public class MainActivity extends AppCompatActivity {
             case NETWORK_PERM_CODE:
                 if (grantResults.length >= 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                    getCurrent();
+                    // initialize a location listener
+                    startService(new Intent(this, LocationService.class));
                 }
                 break;
         }
+    }
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
 
