@@ -427,6 +427,12 @@ public class MainActivity extends AppCompatActivity {
         }
         return isAvailable;
     }
+
+    protected void onResume(){
+        (findViewById(R.id.slidable_content)).setAlpha(1f);
+        super.onResume();
+    }
+
     //handles permission requests
     @Override
     public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults) {

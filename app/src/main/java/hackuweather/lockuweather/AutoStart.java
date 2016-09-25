@@ -14,6 +14,7 @@ public class AutoStart extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         if ((intent.getAction().equals(Intent.ACTION_SCREEN_OFF)
+                ||intent.getAction().equals(Intent.ACTION_SCREEN_ON)
                 || intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED))) {
             start_lockscreen(context);
         }
