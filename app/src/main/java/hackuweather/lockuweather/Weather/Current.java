@@ -15,6 +15,7 @@ public class Current {
     private double mTemperature = 0;
     private String mPhotoUrl;
     private Bitmap mPhotoBitmap;
+    private String mLocation = "";
 
     public int getIcon() {
         return mIcon;
@@ -60,6 +61,10 @@ public class Current {
     public void setPhotoUrl(String photoUrl) {
         mPhotoUrl = photoUrl;
     }
+
+    public void setLocation(String location){ mLocation  = location; }
+
+    public String getLocation(){ return mLocation; }
 
     public void setPhotoBitmap(Bitmap photoBitmap){
         mPhotoBitmap = photoBitmap;

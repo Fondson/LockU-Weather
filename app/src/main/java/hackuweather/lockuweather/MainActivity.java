@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView weatherIcon;
     private static FrameLayout overallView;
     private TextView currentTemp;
+    private TextView locationName;
     static String APIKEY = "HackuWeather2016";
     private String mLocationKey = "335315";
     private OkHttpClient okHttpClient = new OkHttpClient();
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         backDrop = (ImageView) findViewById(R.id.weatherBackdrop);
         currentTemp = (TextView) findViewById(R.id.weatherText);
         weatherIcon = (ImageView) findViewById(R.id.weatherIcon);
+        locationName = (TextView) findViewById(R.id.weatherLocale);
 
 //        weatherIcon.setImageResource(R.drawable.weather_icon1);
 //        currentTemp.setText("00°C");
@@ -272,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
     public void getKey() {
         // initialize the api with key and parameters
         String forecastURL = "\n" +
-                "http://api.accuweather.com/locations/v1/cities/geoposition/search.json?q=" + mLatitude +
+                "http://apidev.accuweather.com/locations/v1/cities/geoposition/search.json?q=" + mLatitude +
                 "," + mLongitude + "&apikey=" + APIKEY;
 
         if (isNetworkAvailable()) {
@@ -344,6 +346,7 @@ public class MainActivity extends AppCompatActivity {
         weatherIcon.setImageResource(mForecast.getCurrent().getIconId());
         backDrop.setImageBitmap(mForecast.getCurrent().getPhotoBitmap());
         backDrop.setScaleType(ImageView.ScaleType.FIT_XY);
+        locationName.setText(mForecast.getCurrent().getLocation());
         fiveDayForecast = mForecast.getDailyForecast();
     }
 
@@ -369,6 +372,9 @@ public class MainActivity extends AppCompatActivity {
             int currentTemp = metricJson.getInt("Value");
             currentWeather.setTemperature(currentTemp);
             Log.d("currentWeather", Integer.toString(currentTemp));
+
+            String locationID = jsonObject.getString("EnglishName");
+            currentWeather.setLocation(locationID);
 
             JSONArray photos  = jsonObject.getJSONArray("Photos");
             JSONObject photo = photos.getJSONObject(0);
