@@ -4,8 +4,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,8 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.nfc.Tag;
 import android.os.Build;
 import android.util.Log;
 
@@ -26,10 +35,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 
 import hackuweather.lockuweather.Weather.Current;
 import hackuweather.lockuweather.Weather.Day;
@@ -56,9 +68,10 @@ public class MainActivity extends AppCompatActivity {
     static String APIKEY = "HackuWeather2016";
     private String mLocationKey = "335315";
     private OkHttpClient okHttpClient = new OkHttpClient();
-    private float x1, x2;
+    private float y1, y2;
     private static final String TAG = MainActivity.class.getSimpleName();
     private Forecast mForecast;
+    public static Day[] fiveDayForecast = new Day[5];
     private static final int NETWORK_PERM_CODE = 0;
     static final int MIN_DISTANCE = 150;
     public static String[] NETWORK_PERM = {"android.permission.ACCESS_NETWORK_STATE"
@@ -84,8 +97,10 @@ public class MainActivity extends AppCompatActivity {
         currentTemp = (TextView) findViewById(R.id.weatherText);
         weatherIcon = (ImageView) findViewById(R.id.weatherIcon);
 
-        backDrop.setImageResource(R.drawable.default_wallpaper);
-        backDrop.setScaleType(ImageView.ScaleType.FIT_XY);
+//        weatherIcon.setImageResource(R.drawable.weather_icon1);
+//        currentTemp.setText("00°C");
+//        backDrop.setImageResource(R.drawable.default_wallpaper);
+
         clockView.bringToFront();
 
         config = new SlidrConfig.Builder()
@@ -135,31 +150,32 @@ public class MainActivity extends AppCompatActivity {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                x1 = event.getX();
+                y1 = event.getY();
                 break;
             case MotionEvent.ACTION_UP:
-                x2 = event.getX();
-                float deltaX = x2 - x1;
+                y2 = event.getY();
+                float deltaY = y2 - y1;
 
-                if (Math.abs(deltaX) > MIN_DISTANCE) {
+                if (Math.abs(deltaY) > MIN_DISTANCE) {
                     // Left to Right swipe action
-                    if (x2 > x1) {
+                    if (y2 > y1) {
                         Toast.makeText(this, "Left to Right swipe [Next]", Toast.LENGTH_SHORT).show();
+                        Intent myIntent = new Intent(this, FutureForecast.class);
+                        myIntent.putExtra("APIKEY", APIKEY); //Optional parameters
+                        this.startActivity(myIntent);
                     }
-
-                    // Right to left swipe action
-                    else {
-                        Toast.makeText(this, "Right to Left swipe [Previous]", Toast.LENGTH_SHORT).show();
-                    }
-
-                } else {
-                    // consider as something else - a screen tap for example
                 }
                 break;
         }
         return super.onTouchEvent(event);
     }
 
+    public void openFutureForecast(View view)
+    {
+        Intent myIntent = new Intent(this, FutureForecast.class);
+        myIntent.putExtra("APIKEY", APIKEY); //Optional parameters
+        this.startActivity(myIntent);
+    }
 
     private void initializeLocationManager(){
 
@@ -322,6 +338,8 @@ public class MainActivity extends AppCompatActivity {
         currentTemp.setText("" + mForecast.getCurrent().getTemperature() + "°C");
         weatherIcon.setImageResource(mForecast.getCurrent().getIconId());
         backDrop.setImageBitmap(mForecast.getCurrent().getPhotoBitmap());
+        backDrop.setScaleType(ImageView.ScaleType.FIT_XY);
+        fiveDayForecast = mForecast.getDailyForecast();
     }
 
     private Current getCurrentDetails(String jsonData) {
@@ -485,6 +503,12 @@ public class MainActivity extends AppCompatActivity {
         }
         return isAvailable;
     }
+
+    protected void onResume(){
+        (findViewById(R.id.slidable_content)).setAlpha(1f);
+        super.onResume();
+    }
+
     //handles permission requests
     @Override
     public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults) {
@@ -501,6 +525,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
+
     public static boolean hasPermissions(Context context, String... permissions) {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
             for (String permission : permissions) {
