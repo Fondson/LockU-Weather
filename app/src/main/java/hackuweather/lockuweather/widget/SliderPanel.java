@@ -722,7 +722,7 @@ public class SliderPanel extends FrameLayout {
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
             super.onViewPositionChanged(changedView, left, top, dx, dy);
-            float percent = 1f - ((float) Math.abs(left) / (float)mScreenWidth);
+            float percent = 1f - ((float) Math.abs(left) / ((float)mScreenWidth *0.6f));
 
             if(mListener != null) mListener.onSlideChange(percent);
 

@@ -111,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
                 .scrimEndAlpha(0f)
                 .velocityThreshold(2400)
                 .distanceThreshold(0.25f)
-                .edge(true)
                 .edgeSize(1.0f) // The % of the screen that counts as the edge, default 18%
                 .build();
 
