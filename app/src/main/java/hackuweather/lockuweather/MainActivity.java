@@ -34,6 +34,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout clockView;
     private ImageView backDrop;
     private ImageView weatherIcon;
+    private TextView locationName;
     private static FrameLayout overallView;
     private TextView currentTemp;
     static String APIKEY = "HackuWeather2016";
@@ -97,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         overallView = (FrameLayout) findViewById(R.id.overallView);
         backDrop = (ImageView) findViewById(R.id.weatherBackdrop);
         currentTemp = (TextView) findViewById(R.id.weatherText);
+        locationName = (TextView) findViewById(R.id.weatherLocale);
         weatherIcon = (ImageView) findViewById(R.id.weatherIcon);
 
 //        weatherIcon.setImageResource(R.drawable.weather_icon1);
@@ -335,7 +338,7 @@ public class MainActivity extends AppCompatActivity {
             key = jsonObject.getString("Key");
             Log.d(TAG, "The Key is" + key);
 
-            String name = jsonObject.getString("LocalizedName");
+            String name = jsonObject.getString("EnglishName");
             Log.d("The name is", name);
 
             mName = name;
@@ -351,6 +354,7 @@ public class MainActivity extends AppCompatActivity {
         weatherIcon.setImageResource(mForecast.getCurrent().getIconId());
         backDrop.setImageBitmap(mForecast.getCurrent().getPhotoBitmap());
         backDrop.setScaleType(ImageView.ScaleType.FIT_XY);
+        locationName.setText(mName);
         fiveDayForecast = mForecast.getDailyForecast();
     }
 
