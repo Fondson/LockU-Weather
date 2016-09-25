@@ -83,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
     private double mLatitude = 43.6532;
     private double mLongitude = 79.3832;
 
+    private String mName = "Toronto";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,9 +192,6 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions(NETWORK_PERM, NETWORK_PERM_CODE);
         }
         else {
-            getKey();
-            getDays();
-            getCurrent();
             // initialize a location listener
             startService(new Intent(this, LocationService.class));
         }
@@ -238,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         // store the data from the response
                         String jsonData = response.body().string();
-                        Log.v(TAG, jsonData);
+                        Log.v("currentJson", jsonData);
                         // can't remember what this does
                         if (response.isSuccessful()) {
                             // update the forecast with the details from the
@@ -270,6 +269,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void getKey() {
+        Log.d("getKey", "The latitude is " + mLatitude + " the longitude is " + mLongitude);
         // initialize the api with key and parameters
         String forecastURL = "\n" +
                 "http://apidev.accuweather.com/locations/v1/cities/geoposition/search.json?q=" + mLatitude +
@@ -311,6 +311,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.v(TAG, jsonData);
                         // can't remember what this does
                         if (response.isSuccessful()) {
+                            Log.d("keyjson", jsonData);
                             mLocationKey = getLocationKey(jsonData);
                             Log.d("longlat", "onResponse: "+mLocationKey);
                         } else {
@@ -332,8 +333,12 @@ public class MainActivity extends AppCompatActivity {
         try {
             JSONObject jsonObject = new JSONObject(jsonData);
             key = jsonObject.getString("Key");
-            Log.d(TAG, key);
+            Log.d(TAG, "The Key is" + key);
 
+            String name = jsonObject.getString("LocalizedName");
+            Log.d("The name is", name);
+
+            mName = name;
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -523,9 +528,7 @@ public class MainActivity extends AppCompatActivity {
             case NETWORK_PERM_CODE:
                 if (grantResults.length >= 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getKey();
-                    getDays();
-                    getCurrent();
+
                     // initialize a location listener
                     startService(new Intent(this, LocationService.class));
                 }

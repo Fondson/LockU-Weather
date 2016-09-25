@@ -19,7 +19,7 @@ public class LocationService extends Service {
     private double mLongitude;
     private double mLatitude;
 
-    private static float LOCATION_REFRESH_DISTANCE = 0;
+    private static float LOCATION_REFRESH_DISTANCE = 100;
     private static long LOCATION_REFRESH_TIME = 5000;
 
     public IBinder onBind(Intent intent) {
@@ -33,6 +33,15 @@ public class LocationService extends Service {
                 mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
                         LOCATION_REFRESH_DISTANCE, mLocationListener);
+                Location location = mLocationManager.getLastKnownLocation(mLocationManager.GPS_PROVIDER);
+                mLatitude = location.getLatitude();
+                mLongitude = location.getLongitude();
+                MainActivityContainer.getMainActivity().setLatitude(mLatitude);
+                MainActivityContainer.getMainActivity().setLongitude(mLongitude);
+                Log.d("Latitude","" + MainActivityContainer.getMainActivity().getLatitude() );
+                MainActivityContainer.getMainActivity().getKey();
+                MainActivityContainer.getMainActivity().getDays();
+                MainActivityContainer.getMainActivity().getCurrent();
             }
         }
         catch (Exception e){

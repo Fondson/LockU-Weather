@@ -12,7 +12,7 @@ public class Current {
 
     private int mIcon = 0;
     private String mSummary = "";
-    private double mTemperature = 0;
+    private int mTemperature = 0;
     private String mPhotoUrl;
     private Bitmap mPhotoBitmap;
 
@@ -29,7 +29,7 @@ public class Current {
         return (int) mTemperature;
     }
 
-    public void setTemperature(double temperature) {
+    public void setTemperature(int temperature) {
         mTemperature = temperature;
     }
 
