@@ -46,6 +46,9 @@ import java.net.URLConnection;
 import hackuweather.lockuweather.Weather.Current;
 import hackuweather.lockuweather.Weather.Day;
 import hackuweather.lockuweather.Weather.Forecast;
+import hackuweather.lockuweather.model.SlidrConfig;
+import hackuweather.lockuweather.model.SlidrInterface;
+import hackuweather.lockuweather.model.SlidrPosition;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -60,12 +63,11 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout clockView;
     private ImageView backDrop;
     private ImageView weatherIcon;
-    private FrameLayout overallView;
+    private static FrameLayout overallView;
     private TextView currentTemp;
-    private static float LOCATION_REFRESH_DISTANCE = -1;
-    private static long LOCATION_REFRESH_TIME = 200;
     static String APIKEY = "HackuWeather2016";
-
+    private String mLocationKey = "335315";
+    private OkHttpClient okHttpClient = new OkHttpClient();
     private float x1, x2;
     private static final String TAG = MainActivity.class.getSimpleName();
     private Forecast mForecast;
@@ -76,16 +78,15 @@ public class MainActivity extends AppCompatActivity {
             , "android.permission.INTERNET"
             , "android.permission.ACCESS_FINE_LOCATION"
             , "android.permission.ACCESS_COARSE_LOCATION"};
-
-    private LocationListener mLocationListener;
-    private double mLongitude;
-    private double mLatitude;
-
-    OkHttpClient mOkHttpClient = new OkHttpClient();
+    private SlidrConfig config;
+    private SlidrInterface slidrInterface;
+    private double mLatitude = 43.6532;
+    private double mLongitude = 79.3832;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MainActivityContainer.setMainActivity(this);
         setContentView(R.layout.activity_main);
 
         lockTimeHr = (TextClock) findViewById(R.id.lock_time_hr);
@@ -102,6 +103,19 @@ public class MainActivity extends AppCompatActivity {
 
         clockView.bringToFront();
 
+        config = new SlidrConfig.Builder()
+                .position(SlidrPosition.HORIZONTAL)
+                .sensitivity(0.75f)
+                .scrimColor(Color.TRANSPARENT)
+                .scrimStartAlpha(1f)
+                .scrimEndAlpha(0f)
+                .velocityThreshold(2400)
+                .distanceThreshold(0.25f)
+                .edgeSize(1.0f) // The % of the screen that counts as the edge, default 18%
+                .build();
+
+        slidrInterface=Slidr.attach(this, config);
+
         initializeLocationManager();
     }
 
@@ -112,6 +126,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         startService(new Intent(this, UpdateService.class));
+    }
+
+    public static FrameLayout getBackground(){
+        return overallView;
     }
 
     @Override
@@ -153,24 +171,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void initializeLocationManager() {
+    private void initializeLocationManager(){
 
         mForecast = new Forecast();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && !hasPermissions(this, NETWORK_PERM)) {
+                && !hasPermissions(this,NETWORK_PERM)) {
             requestPermissions(NETWORK_PERM, NETWORK_PERM_CODE);
-        } else {
-            getHour();
+        }
+        else {
+            getKey();
+            getDays();
             getCurrent();
             // initialize a location listener
             startService(new Intent(this, LocationService.class));
         }
     }
 
-    private void getCurrent() {
+    public void getCurrent() {
         // initialize the api with key and parameters
         String apiKey = "hackuweather2016";
-        String forecastURL = "http://apidev.accuweather.com/currentconditions/v1/" + "335315" + ".json?apikey=" + APIKEY
+        String forecastURL = "http://apidev.accuweather.com/currentconditions/v1/"+ mLocationKey + ".json?apikey=" + APIKEY
                 + "&getPhotos=true";
 
         if (isNetworkAvailable()) {
@@ -237,6 +257,77 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    public void getKey() {
+        // initialize the api with key and parameters
+        String forecastURL = "\n" +
+                "http://api.accuweather.com/locations/v1/cities/geoposition/search.json?q=" + mLatitude +
+                "," + mLongitude + "&apikey=" + APIKEY;
+
+        if (isNetworkAvailable()) {
+            // display refresh animation (i.e. make the animation spin)
+            toggleRefresh();
+            // connect to the api using ok http
+            Request request = new Request.Builder().url(forecastURL).build();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // turn the animation off
+                            toggleRefresh();
+                        }
+                    });
+                    // display an error message to the user
+                    alertUserAboutError();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    // if a valid response is relieved
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // turn off the refresh animation
+                            toggleRefresh();
+                        }
+                    });
+                    try {
+                        // store the data from the response
+                        String jsonData = response.body().string();
+                        Log.v(TAG, jsonData);
+                        // can't remember what this does
+                        if (response.isSuccessful()) {
+                            mLocationKey = getLocationKey(jsonData);
+                        } else {
+                            alertUserAboutError();
+                        }
+                    } catch (IOException e) {
+                        Log.e(TAG, "COULD NOT CONNECT TO FORECAST API");
+                    }
+                }
+            });
+        } else {
+            Toast.makeText(this, R.string.toast_unavailable_network_message,
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private String getLocationKey(String jsonData) {
+        String key = "3380050";
+        try {
+            JSONObject jsonObject = new JSONObject(jsonData);
+            key = jsonObject.getString("Key");
+            Log.d(TAG, key);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return key;
+    }
+
     private void updateDisplay() throws IOException {
         currentTemp.setText("" + mForecast.getCurrent().getTemperature() + "°C");
         weatherIcon.setImageResource(mForecast.getCurrent().getIconId());
@@ -267,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
             currentWeather.setTemperature(currentTemp);
             Log.d("currentWeather", Integer.toString(currentTemp));
 
-            JSONArray photos = jsonObject.getJSONArray("Photos");
+            JSONArray photos  = jsonObject.getJSONArray("Photos");
             JSONObject photo = photos.getJSONObject(0);
 
             // get the photo url
@@ -285,15 +376,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void getHour() {
+    public void getDays() {
         // initialize the api with key and paramters
-        String forecastURL = "http://apidev.accuweather.com/forecasts/v1/hourly/12hour/" + "335315" + "?apikey=" + APIKEY;
+        String forecastURL = "http://apidev.accuweather.com/forecasts/v1/daily/5day/"+ mLocationKey + "?apikey=" + APIKEY;
 
         if (isNetworkAvailable()) {
             // display refresh animation (i.e. make the animation spin)
             toggleRefresh();
             // connect to the api using ok http
-            OkHttpClient okHttpClient = new OkHttpClient();
+
             Request request = new Request.Builder().url(forecastURL).build();
             Call call = okHttpClient.newCall(request);
             call.enqueue(new Callback() {
@@ -327,7 +418,7 @@ public class MainActivity extends AppCompatActivity {
                         // can't remember what this does
                         if (response.isSuccessful()) {
                             // update the forecast with the details from the
-                            Day[] days = getHourDetails(jsonData.substring(1, jsonData.length() - 1));
+                            Day[] days = getDaysDetails(jsonData);
                             mForecast.setDailyForecast(days);
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -349,7 +440,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private Day[] getHourDetails(String jsonData) {
+    private Day[] getDaysDetails(String jsonData) {
         Day[] days = new Day[5];
         try {
             JSONObject jsonObject = new JSONObject(jsonData);
@@ -406,6 +497,11 @@ public class MainActivity extends AppCompatActivity {
         return isAvailable;
     }
 
+    protected void onResume(){
+        (findViewById(R.id.slidable_content)).setAlpha(1f);
+        super.onResume();
+    }
+
     //handles permission requests
     @Override
     public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults) {
@@ -413,9 +509,8 @@ public class MainActivity extends AppCompatActivity {
             case NETWORK_PERM_CODE:
                 if (grantResults.length >= 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getHour();
-                    Log.d(TAG, "Assigned day forecast");
-
+                    getKey();
+                    getDays();
                     getCurrent();
                     // initialize a location listener
                     startService(new Intent(this, LocationService.class));
@@ -448,5 +543,21 @@ public class MainActivity extends AppCompatActivity {
             // Log exception
             return null;
         }
+    }
+
+    public double getLatitude() {
+        return mLatitude;
+    }
+
+    public void setLatitude(double mLatitude) {
+        this.mLatitude = mLatitude;
+    }
+
+    public double getLongitude() {
+        return mLongitude;
+    }
+
+    public void setLongitude(double mLongitude) {
+        this.mLongitude = mLongitude;
     }
 }

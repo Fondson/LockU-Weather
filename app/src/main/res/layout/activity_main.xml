@@ -10,11 +10,28 @@
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
 
-    <LinearLayout
-        android:id="@+id/clockView"
+    <FrameLayout
+        android:id="@+id/imageLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/weatherBackdrop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.7"/>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/slideLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/clockView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -27,7 +44,7 @@
                 android:fontFamily="sans-serif-condensed"
                 android:layout_gravity="end"
                 android:keepScreenOn="true"
-                android:format24Hour="hh"
+                android:format12Hour="hh"
                 android:textColor="#ffffff"
                 android:textSize="120sp"
                 android:typeface="normal"
@@ -39,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:layout_gravity="end"
-                android:format24Hour="mm"
+                android:format12Hour="mm"
                 android:keepScreenOn="true"
                 android:textColor="#ffffff"
                 android:textSize="100sp"
@@ -48,26 +65,26 @@
                 android:layout_alignTop="@+id/lock_time_hr"
                 android:layout_toRightOf="@+id/lock_time_hr"/>
 
-        </RelativeLayout>
-
-    </LinearLayout>
-    <!-- This FrameLayout insets its children based on system windows using
-         android:fitsSystemWindows. -->
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
-
-        <LinearLayout
-            android:id="@+id/fullscreen_content_controls"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:orientation="horizontal"
-            tools:ignore="UselessParent">
+            </RelativeLayout>
 
         </LinearLayout>
-    </FrameLayout>
+        <!-- This FrameLayout insets its children based on system windows using
+             android:fitsSystemWindows. -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
+
+            <LinearLayout
+                android:id="@+id/fullscreen_content_controls"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:orientation="horizontal"
+                tools:ignore="UselessParent">
+
+            </LinearLayout>
+        </FrameLayout>
 
     <FrameLayout
         android:id="@+id/imageLayout"
@@ -83,9 +100,9 @@
 
     </FrameLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/weatherIcon"
@@ -107,15 +124,16 @@
             android:layout_toStartOf="@+id/weatherIcon"
             android:layout_alignBottom="@+id/weatherIcon" />
 
-        <ImageView
-            android:id="@+id/unlockArrow"
-            android:layout_width="45sp"
-            android:layout_height="45sp"
-            android:src="@drawable/abc_vector_test"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true" />
+            <ImageView
+                android:id="@+id/unlockArrow"
+                android:layout_width="45sp"
+                android:layout_height="45sp"
+                android:src="@drawable/abc_vector_test"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true" />
 
-    </RelativeLayout>
+        </RelativeLayout>
 
+    </FrameLayout>
 
 </FrameLayout>
