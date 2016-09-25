@@ -16,8 +16,8 @@ import android.util.Log;
 public class LocationService extends Service {
     private LocationListener mLocationListener;
     private LocationManager mLocationManager;
-    private double mLongitude;
-    private double mLatitude;
+    private double mLongitude = 79.3832;
+    private double mLatitude = 43.6532;
 
     private static float LOCATION_REFRESH_DISTANCE = 0;
     private static long LOCATION_REFRESH_TIME = 30;
@@ -34,7 +34,7 @@ public class LocationService extends Service {
                         LOCATION_REFRESH_DISTANCE, mLocationListener);
 
             }
-            Location location = mLocationManager.getLastKnownLocation(mLocationManager.GPS_PROVIDER);
+            Location location = mLocationManager.getLastKnownLocation(mLocationManager.NETWORK_PROVIDER);
             mLatitude = location.getLatitude();
             mLongitude = location.getLongitude();
             MainActivityContainer.getMainActivity().setLatitude(mLatitude);

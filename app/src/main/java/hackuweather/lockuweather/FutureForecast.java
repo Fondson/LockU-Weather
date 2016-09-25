@@ -2,6 +2,9 @@ package hackuweather.lockuweather;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -42,7 +45,9 @@ public class FutureForecast extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         futureView = (FrameLayout) findViewById(R.id.futureView);
-        futureView.setBackgroundResource(R.drawable.gradient_backdrop);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.gradient_backdrop);
+        bitmap =Bitmap.createScaledBitmap(bitmap, 2048, 2048, true);
+        futureView.setBackground(new BitmapDrawable(getResources(), bitmap));
         Forecast mForecast = new Forecast();
         Intent intent = getIntent();
         APIKEY = intent.getStringExtra("APIKEY"); //if it's a string you stored.
