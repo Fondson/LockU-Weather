@@ -12,17 +12,15 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-/**
- * Created by Fondson on 2016-09-24.
- */
+
 public class LocationService extends Service {
     private LocationListener mLocationListener;
     private LocationManager mLocationManager;
     private double mLongitude;
     private double mLatitude;
 
-    private static float LOCATION_REFRESH_DISTANCE = -1;
-    private static long LOCATION_REFRESH_TIME = 50;
+    private static float LOCATION_REFRESH_DISTANCE = 0;
+    private static long LOCATION_REFRESH_TIME = 0;
 
     public IBinder onBind(Intent intent) {
         return null;
@@ -49,7 +47,13 @@ public class LocationService extends Service {
             //your code here
             mLatitude = location.getLatitude();
             mLongitude = location.getLongitude();
+            toggleRefreshTime();
             Log.d("longlat", Double.toString(mLatitude) + " " + Double.toString(mLongitude));
+            MainActivityContainer.getMainActivity().setLatitude(mLatitude);
+            MainActivityContainer.getMainActivity().setLongitude(mLongitude);
+            MainActivityContainer.getMainActivity().getDays();
+            MainActivityContainer.getMainActivity().getCurrent();
+
         }
 
         @Override
@@ -65,6 +69,32 @@ public class LocationService extends Service {
         @Override
         public void onProviderDisabled(String s) {
             // display a toast saying gps unavailable
+        }
+    }
+
+
+    private void toggleRefreshTime() {
+        if (LOCATION_REFRESH_TIME == 2000) {
+            LOCATION_REFRESH_TIME = 720000;
+        }
+        else {
+            LOCATION_REFRESH_TIME = 2000;
+        }
+
+        if (LOCATION_REFRESH_DISTANCE == 0) {
+            LOCATION_REFRESH_DISTANCE = 100;
+        }
+
+        try {
+            if (MainActivity.hasPermissions(this, MainActivity.NETWORK_PERM)) {
+                mLocationListener = new CustomLocationListener();
+                mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
+                        LOCATION_REFRESH_DISTANCE, mLocationListener);
+            }
+        }
+        catch (Exception e){
+            Log.d("longlat", e.getMessage());
         }
     }
 }
