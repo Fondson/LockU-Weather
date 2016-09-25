@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private float x1, x2;
     private static final String TAG = MainActivity.class.getSimpleName();
     private Forecast mForecast;
+    public static Day[] fiveDayForecast = new Day[5];
     private static final int NETWORK_PERM_CODE = 0;
     static final int MIN_DISTANCE = 150;
     public static String[] NETWORK_PERM = {"android.permission.ACCESS_NETWORK_STATE"
@@ -95,8 +96,10 @@ public class MainActivity extends AppCompatActivity {
         currentTemp = (TextView) findViewById(R.id.weatherText);
         weatherIcon = (ImageView) findViewById(R.id.weatherIcon);
 
-        backDrop.setImageResource(R.drawable.default_wallpaper);
-        backDrop.setScaleType(ImageView.ScaleType.FIT_XY);
+//        weatherIcon.setImageResource(R.drawable.weather_icon1);
+//        currentTemp.setText("00°C");
+//        backDrop.setImageResource(R.drawable.default_wallpaper);
+
         clockView.bringToFront();
 
         initializeLocationManager();
@@ -139,15 +142,10 @@ public class MainActivity extends AppCompatActivity {
                     // Left to Right swipe action
                     if (x2 > x1) {
                         Toast.makeText(this, "Left to Right swipe [Next]", Toast.LENGTH_SHORT).show();
+                        Intent myIntent = new Intent(this, FutureForecast.class);
+                        myIntent.putExtra("APIKEY", APIKEY); //Optional parameters
+                        this.startActivity(myIntent);
                     }
-
-                    // Right to left swipe action
-                    else {
-                        Toast.makeText(this, "Right to Left swipe [Previous]", Toast.LENGTH_SHORT).show();
-                    }
-
-                } else {
-                    // consider as something else - a screen tap for example
                 }
                 break;
         }
@@ -155,14 +153,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void initializeLocationManager(){
+    private void initializeLocationManager() {
 
         mForecast = new Forecast();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && !hasPermissions(this,NETWORK_PERM)) {
+                && !hasPermissions(this, NETWORK_PERM)) {
             requestPermissions(NETWORK_PERM, NETWORK_PERM_CODE);
-        }
-        else {
+        } else {
+            getHour();
             getCurrent();
             // initialize a location listener
             startService(new Intent(this, LocationService.class));
@@ -172,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
     private void getCurrent() {
         // initialize the api with key and parameters
         String apiKey = "hackuweather2016";
-        String forecastURL = "http://apidev.accuweather.com/currentconditions/v1/"+ "335315" + ".json?apikey=" + APIKEY
+        String forecastURL = "http://apidev.accuweather.com/currentconditions/v1/" + "335315" + ".json?apikey=" + APIKEY
                 + "&getPhotos=true";
 
         if (isNetworkAvailable()) {
@@ -243,6 +241,7 @@ public class MainActivity extends AppCompatActivity {
         currentTemp.setText("" + mForecast.getCurrent().getTemperature() + "°C");
         weatherIcon.setImageResource(mForecast.getCurrent().getIconId());
         backDrop.setImageBitmap(mForecast.getCurrent().getPhotoBitmap());
+        fiveDayForecast = mForecast.getDailyForecast();
     }
 
     private Current getCurrentDetails(String jsonData) {
@@ -268,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
             currentWeather.setTemperature(currentTemp);
             Log.d("currentWeather", Integer.toString(currentTemp));
 
-            JSONArray photos  = jsonObject.getJSONArray("Photos");
+            JSONArray photos = jsonObject.getJSONArray("Photos");
             JSONObject photo = photos.getJSONObject(0);
 
             // get the photo url
@@ -288,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getHour() {
         // initialize the api with key and paramters
-        String forecastURL = "http://apidev.accuweather.com/forecasts/v1/hourly/12hour/"+ "335315" + "?apikey=" + APIKEY;
+        String forecastURL = "http://apidev.accuweather.com/forecasts/v1/hourly/12hour/" + "335315" + "?apikey=" + APIKEY;
 
         if (isNetworkAvailable()) {
             // display refresh animation (i.e. make the animation spin)
@@ -328,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
                         // can't remember what this does
                         if (response.isSuccessful()) {
                             // update the forecast with the details from the
-                            Day[] days = getHourDetails(jsonData.substring(1, jsonData.length() -1));
+                            Day[] days = getHourDetails(jsonData.substring(1, jsonData.length() - 1));
                             mForecast.setDailyForecast(days);
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -406,6 +405,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return isAvailable;
     }
+
     //handles permission requests
     @Override
     public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults) {
@@ -413,6 +413,9 @@ public class MainActivity extends AppCompatActivity {
             case NETWORK_PERM_CODE:
                 if (grantResults.length >= 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getHour();
+                    Log.d(TAG, "Assigned day forecast");
+
                     getCurrent();
                     // initialize a location listener
                     startService(new Intent(this, LocationService.class));
@@ -420,6 +423,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
+
     public static boolean hasPermissions(Context context, String... permissions) {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
             for (String permission : permissions) {

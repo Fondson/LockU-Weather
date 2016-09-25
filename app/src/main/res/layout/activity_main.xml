@@ -27,7 +27,7 @@
                 android:fontFamily="sans-serif-condensed"
                 android:layout_gravity="end"
                 android:keepScreenOn="true"
-                android:format12Hour="hh"
+                android:format24Hour="hh"
                 android:textColor="#ffffff"
                 android:textSize="120sp"
                 android:typeface="normal"
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:layout_gravity="end"
-                android:format12Hour="mm"
+                android:format24Hour="mm"
                 android:keepScreenOn="true"
                 android:textColor="#ffffff"
                 android:textSize="100sp"
@@ -78,6 +78,7 @@
             android:id="@+id/weatherBackdrop"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:scaleType="fitXY"
             android:alpha="0.7"/>
 
     </FrameLayout>
@@ -90,7 +91,6 @@
             android:id="@+id/weatherIcon"
             android:layout_width="100sp"
             android:layout_height="100sp"
-            android:src="@drawable/weather_icon1"
             android:layout_gravity="right|bottom"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true" />
@@ -100,7 +100,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
-            android:text="85 F"
             android:textSize="50sp"
             android:textColor="#ffffff"
             android:layout_gravity="center_horizontal|bottom"
