@@ -110,7 +110,8 @@
             android:layout_height="100sp"
             android:layout_gravity="right|bottom"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:onClick="openFutureForecast"/>
 
         <TextView
             android:id="@+id/weatherText"

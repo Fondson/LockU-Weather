@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     static String APIKEY = "HackuWeather2016";
     private String mLocationKey = "335315";
     private OkHttpClient okHttpClient = new OkHttpClient();
-    private float x1, x2;
+    private float y1, y2;
     private static final String TAG = MainActivity.class.getSimpleName();
     private Forecast mForecast;
     public static Day[] fiveDayForecast = new Day[5];
@@ -150,15 +150,15 @@ public class MainActivity extends AppCompatActivity {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                x1 = event.getX();
+                y1 = event.getY();
                 break;
             case MotionEvent.ACTION_UP:
-                x2 = event.getX();
-                float deltaX = x2 - x1;
+                y2 = event.getY();
+                float deltaY = y2 - y1;
 
-                if (Math.abs(deltaX) > MIN_DISTANCE) {
+                if (Math.abs(deltaY) > MIN_DISTANCE) {
                     // Left to Right swipe action
-                    if (x2 > x1) {
+                    if (y2 > y1) {
                         Toast.makeText(this, "Left to Right swipe [Next]", Toast.LENGTH_SHORT).show();
                         Intent myIntent = new Intent(this, FutureForecast.class);
                         myIntent.putExtra("APIKEY", APIKEY); //Optional parameters
@@ -170,6 +170,12 @@ public class MainActivity extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
 
+    public void openFutureForecast(View view)
+    {
+        Intent myIntent = new Intent(this, FutureForecast.class);
+        myIntent.putExtra("APIKEY", APIKEY); //Optional parameters
+        this.startActivity(myIntent);
+    }
 
     private void initializeLocationManager(){
 
@@ -332,6 +338,7 @@ public class MainActivity extends AppCompatActivity {
         currentTemp.setText("" + mForecast.getCurrent().getTemperature() + "°C");
         weatherIcon.setImageResource(mForecast.getCurrent().getIconId());
         backDrop.setImageBitmap(mForecast.getCurrent().getPhotoBitmap());
+        backDrop.setScaleType(ImageView.ScaleType.FIT_XY);
         fiveDayForecast = mForecast.getDailyForecast();
     }
 

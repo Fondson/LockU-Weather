@@ -26,7 +26,7 @@ public class FutureForecast extends AppCompatActivity {
 
     private String APIKEY;
     static final int MIN_DISTANCE = 150;
-    private float x1, x2;
+    private float y1, y2;
     private FrameLayout futureView;
     private ImageView[] dayIcons = new ImageView[5];
     private TextView[] dayNames = new TextView[5];
@@ -42,12 +42,12 @@ public class FutureForecast extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         futureView = (FrameLayout) findViewById(R.id.futureView);
+        futureView.setBackgroundResource(R.drawable.gradient_backdrop);
         Forecast mForecast = new Forecast();
         Intent intent = getIntent();
         APIKEY = intent.getStringExtra("APIKEY"); //if it's a string you stored.
 
         dayIcons[0] = (ImageView) findViewById(R.id.weatherIconDay1);
-
         dayIcons[0].setImageResource(mForecast.getIconId(MainActivity.fiveDayForecast[0].getIconId()));
         dayIcons[1] = (ImageView) findViewById(R.id.weatherIconDay2);
         dayIcons[1].setImageResource(mForecast.getIconId(MainActivity.fiveDayForecast[1].getIconId()));
@@ -57,6 +57,29 @@ public class FutureForecast extends AppCompatActivity {
         dayIcons[3].setImageResource(mForecast.getIconId(MainActivity.fiveDayForecast[3].getIconId()));
         dayIcons[4] = (ImageView) findViewById(R.id.weatherIconDay5);
         dayIcons[4].setImageResource(mForecast.getIconId(MainActivity.fiveDayForecast[4].getIconId()));
+
+        dayTemps[0] = (TextView) findViewById(R.id.weatherTextDay1);
+        dayTemps[0].setText((MainActivity.fiveDayForecast[0].getTemperatureMax()) + "°C");
+        dayTemps[1] = (TextView) findViewById(R.id.weatherTextDay2);
+        dayTemps[1].setText((MainActivity.fiveDayForecast[1].getTemperatureMax()) + "°C");
+        dayTemps[2] = (TextView) findViewById(R.id.weatherTextDay3);
+        dayTemps[2].setText((MainActivity.fiveDayForecast[2].getTemperatureMax()) + "°C");
+        dayTemps[3] = (TextView) findViewById(R.id.weatherTextDay4);
+        dayTemps[3].setText((MainActivity.fiveDayForecast[3].getTemperatureMax()) + "°C");
+        dayTemps[4] = (TextView) findViewById(R.id.weatherTextDay5);
+        dayTemps[4].setText((MainActivity.fiveDayForecast[4].getTemperatureMax()) + "°C");
+
+        dayNames[0] = (TextView) findViewById(R.id.weatherNameDay1);
+        dayNames[0].setText((MainActivity.fiveDayForecast[0].getDayOfTheWeek()));
+        dayNames[1] = (TextView) findViewById(R.id.weatherNameDay2);
+        dayNames[1].setText((MainActivity.fiveDayForecast[1].getDayOfTheWeek()));
+        dayNames[2] = (TextView) findViewById(R.id.weatherNameDay3);
+        dayNames[2].setText((MainActivity.fiveDayForecast[2].getDayOfTheWeek()));
+        dayNames[3] = (TextView) findViewById(R.id.weatherNameDay4);
+        dayNames[3].setText((MainActivity.fiveDayForecast[3].getDayOfTheWeek()));
+        dayNames[4] = (TextView) findViewById(R.id.weatherNameDay5);
+        dayNames[4].setText((MainActivity.fiveDayForecast[4].getDayOfTheWeek()));
+
 
 
 
@@ -85,16 +108,15 @@ public class FutureForecast extends AppCompatActivity {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                x1 = event.getX();
+                y1 = event.getY();
                 break;
             case MotionEvent.ACTION_UP:
-                x2 = event.getX();
-                float deltaX = x2 - x1;
+                y2 = event.getY();
+                float deltaY = y2 - y1;
 
-                if (Math.abs(deltaX) > MIN_DISTANCE) {
+                if (Math.abs(deltaY) > MIN_DISTANCE) {
                     // Left to Right swipe action
-                    if (x1 > x2) {
-                        Toast.makeText(this, "Right to Left swipe [Previous]", Toast.LENGTH_SHORT).show();
+                    if (y1 < y2) {
                         Intent myIntent = new Intent(this, MainActivity.class);
                         myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         this.startActivity(myIntent);
