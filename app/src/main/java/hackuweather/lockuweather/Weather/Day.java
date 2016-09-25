@@ -1,5 +1,7 @@
 package hackuweather.lockuweather.Weather;
 
+import android.util.Log;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -55,7 +57,10 @@ public class Day {
 
     public String getDayOfTheWeek() {
         Date dateTime = new Date(mTime * 1000);
-        return "Monday";
+        SimpleDateFormat df = new SimpleDateFormat("EEEE");
+        String date = df.format(dateTime);
+        Log.d("Day", date);
+        return "date";
     }
 
 }
