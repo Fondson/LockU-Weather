@@ -26,6 +26,7 @@
             </intent-filter>
         </activity>
         <service android:name="hackuweather.lockuweather.UpdateService"/>
+        <service android:name="hackuweather.lockuweather.LocationService"/>
         <receiver
             android:name="hackuweather.lockuweather.AutoStart"
             android:enabled="true">

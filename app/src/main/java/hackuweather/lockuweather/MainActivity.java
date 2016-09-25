@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Layout;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -46,6 +47,9 @@ import java.net.URLConnection;
 import hackuweather.lockuweather.Weather.Current;
 import hackuweather.lockuweather.Weather.Day;
 import hackuweather.lockuweather.Weather.Forecast;
+import hackuweather.lockuweather.model.SlidrConfig;
+import hackuweather.lockuweather.model.SlidrInterface;
+import hackuweather.lockuweather.model.SlidrPosition;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout clockView;
     private ImageView backDrop;
     private ImageView weatherIcon;
-    private FrameLayout overallView;
+    private static FrameLayout overallView;
     private TextView currentTemp;
     private static float LOCATION_REFRESH_DISTANCE = -1;
     private static long LOCATION_REFRESH_TIME = 200;
@@ -77,8 +81,8 @@ public class MainActivity extends AppCompatActivity {
             , "android.permission.ACCESS_COARSE_LOCATION"};
 
     private LocationListener mLocationListener;
-    private double mLongitude;
-    private double mLatitude;
+    private SlidrConfig config;
+    private SlidrInterface slidrInterface;
 
     OkHttpClient mOkHttpClient = new OkHttpClient();
 
@@ -99,6 +103,20 @@ public class MainActivity extends AppCompatActivity {
         backDrop.setScaleType(ImageView.ScaleType.FIT_XY);
         clockView.bringToFront();
 
+        config = new SlidrConfig.Builder()
+                .position(SlidrPosition.HORIZONTAL)
+                .sensitivity(0.75f)
+                .scrimColor(Color.TRANSPARENT)
+                .scrimStartAlpha(1f)
+                .scrimEndAlpha(0f)
+                .velocityThreshold(2400)
+                .distanceThreshold(0.25f)
+                .edge(true)
+                .edgeSize(1.0f) // The % of the screen that counts as the edge, default 18%
+                .build();
+
+        slidrInterface=Slidr.attach(this, config);
+
         initializeLocationManager();
     }
 
@@ -109,6 +127,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         startService(new Intent(this, UpdateService.class));
+    }
+
+    public static FrameLayout getBackground(){
+        return overallView;
     }
 
     @Override

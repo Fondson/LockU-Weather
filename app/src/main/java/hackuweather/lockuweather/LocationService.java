@@ -28,6 +28,7 @@ public class LocationService extends Service {
         return null;
     }
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("longlat", Double.toString(mLatitude) + " " + Double.toString(mLongitude));
         try {
             if (MainActivity.hasPermissions(this, MainActivity.NETWORK_PERM)) {
                 mLocationListener = new CustomLocationListener();
