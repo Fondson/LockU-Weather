@@ -47,38 +47,40 @@ public class FutureForecast extends AppCompatActivity {
         Intent intent = getIntent();
         APIKEY = intent.getStringExtra("APIKEY"); //if it's a string you stored.
 
-        dayIcons[0] = (ImageView) findViewById(R.id.weatherIconDay1);
-        dayIcons[0].setImageResource(mForecast.getIconId(MainActivity.fiveDayForecast[0].getIconId()));
-        dayIcons[1] = (ImageView) findViewById(R.id.weatherIconDay2);
-        dayIcons[1].setImageResource(mForecast.getIconId(MainActivity.fiveDayForecast[1].getIconId()));
-        dayIcons[2] = (ImageView) findViewById(R.id.weatherIconDay3);
-        dayIcons[2].setImageResource(mForecast.getIconId(MainActivity.fiveDayForecast[2].getIconId()));
-        dayIcons[3] = (ImageView) findViewById(R.id.weatherIconDay4);
-        dayIcons[3].setImageResource(mForecast.getIconId(MainActivity.fiveDayForecast[3].getIconId()));
-        dayIcons[4] = (ImageView) findViewById(R.id.weatherIconDay5);
-        dayIcons[4].setImageResource(mForecast.getIconId(MainActivity.fiveDayForecast[4].getIconId()));
+        if(MainActivity.fiveDayForecast[0] != null) {
+            dayIcons[0] = (ImageView) findViewById(R.id.weatherIconDay1);
+            dayIcons[0].setImageResource(mForecast.getIconId(MainActivity.fiveDayForecast[0].getIconId()));
+            dayIcons[1] = (ImageView) findViewById(R.id.weatherIconDay2);
+            dayIcons[1].setImageResource(mForecast.getIconId(MainActivity.fiveDayForecast[1].getIconId()));
+            dayIcons[2] = (ImageView) findViewById(R.id.weatherIconDay3);
+            dayIcons[2].setImageResource(mForecast.getIconId(MainActivity.fiveDayForecast[2].getIconId()));
+            dayIcons[3] = (ImageView) findViewById(R.id.weatherIconDay4);
+            dayIcons[3].setImageResource(mForecast.getIconId(MainActivity.fiveDayForecast[3].getIconId()));
+            dayIcons[4] = (ImageView) findViewById(R.id.weatherIconDay5);
+            dayIcons[4].setImageResource(mForecast.getIconId(MainActivity.fiveDayForecast[4].getIconId()));
 
-        dayTemps[0] = (TextView) findViewById(R.id.weatherTextDay1);
-        dayTemps[0].setText((MainActivity.fiveDayForecast[0].getTemperatureMax()) + "°C");
-        dayTemps[1] = (TextView) findViewById(R.id.weatherTextDay2);
-        dayTemps[1].setText((MainActivity.fiveDayForecast[1].getTemperatureMax()) + "°C");
-        dayTemps[2] = (TextView) findViewById(R.id.weatherTextDay3);
-        dayTemps[2].setText((MainActivity.fiveDayForecast[2].getTemperatureMax()) + "°C");
-        dayTemps[3] = (TextView) findViewById(R.id.weatherTextDay4);
-        dayTemps[3].setText((MainActivity.fiveDayForecast[3].getTemperatureMax()) + "°C");
-        dayTemps[4] = (TextView) findViewById(R.id.weatherTextDay5);
-        dayTemps[4].setText((MainActivity.fiveDayForecast[4].getTemperatureMax()) + "°C");
+            dayTemps[0] = (TextView) findViewById(R.id.weatherTextDay1);
+            dayTemps[0].setText((MainActivity.fiveDayForecast[0].getTemperatureMax()) + "°C");
+            dayTemps[1] = (TextView) findViewById(R.id.weatherTextDay2);
+            dayTemps[1].setText((MainActivity.fiveDayForecast[1].getTemperatureMax()) + "°C");
+            dayTemps[2] = (TextView) findViewById(R.id.weatherTextDay3);
+            dayTemps[2].setText((MainActivity.fiveDayForecast[2].getTemperatureMax()) + "°C");
+            dayTemps[3] = (TextView) findViewById(R.id.weatherTextDay4);
+            dayTemps[3].setText((MainActivity.fiveDayForecast[3].getTemperatureMax()) + "°C");
+            dayTemps[4] = (TextView) findViewById(R.id.weatherTextDay5);
+            dayTemps[4].setText((MainActivity.fiveDayForecast[4].getTemperatureMax()) + "°C");
 
-        dayNames[0] = (TextView) findViewById(R.id.weatherNameDay1);
-        dayNames[0].setText((MainActivity.fiveDayForecast[0].getDayOfTheWeek()));
-        dayNames[1] = (TextView) findViewById(R.id.weatherNameDay2);
-        dayNames[1].setText((MainActivity.fiveDayForecast[1].getDayOfTheWeek()));
-        dayNames[2] = (TextView) findViewById(R.id.weatherNameDay3);
-        dayNames[2].setText((MainActivity.fiveDayForecast[2].getDayOfTheWeek()));
-        dayNames[3] = (TextView) findViewById(R.id.weatherNameDay4);
-        dayNames[3].setText((MainActivity.fiveDayForecast[3].getDayOfTheWeek()));
-        dayNames[4] = (TextView) findViewById(R.id.weatherNameDay5);
-        dayNames[4].setText((MainActivity.fiveDayForecast[4].getDayOfTheWeek()));
+            dayNames[0] = (TextView) findViewById(R.id.weatherNameDay1);
+            dayNames[0].setText((MainActivity.fiveDayForecast[0].getDayOfTheWeek()));
+            dayNames[1] = (TextView) findViewById(R.id.weatherNameDay2);
+            dayNames[1].setText((MainActivity.fiveDayForecast[1].getDayOfTheWeek()));
+            dayNames[2] = (TextView) findViewById(R.id.weatherNameDay3);
+            dayNames[2].setText((MainActivity.fiveDayForecast[2].getDayOfTheWeek()));
+            dayNames[3] = (TextView) findViewById(R.id.weatherNameDay4);
+            dayNames[3].setText((MainActivity.fiveDayForecast[3].getDayOfTheWeek()));
+            dayNames[4] = (TextView) findViewById(R.id.weatherNameDay5);
+            dayNames[4].setText((MainActivity.fiveDayForecast[4].getDayOfTheWeek()));
+        }
 
 
 
@@ -119,7 +121,9 @@ public class FutureForecast extends AppCompatActivity {
                     if (y1 < y2) {
                         Intent myIntent = new Intent(this, MainActivity.class);
                         myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         this.startActivity(myIntent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     }
                 }
                 break;

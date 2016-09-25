@@ -99,7 +99,10 @@ public class MainActivity extends AppCompatActivity {
 
 //        weatherIcon.setImageResource(R.drawable.weather_icon1);
 //        currentTemp.setText("00°C");
-//        backDrop.setImageResource(R.drawable.default_wallpaper);
+        if(getIntent()!=null) {
+            backDrop.setImageResource(R.drawable.default_wallpaper);
+            backDrop.setScaleType(ImageView.ScaleType.FIT_XY);
+        }
 
         clockView.bringToFront();
 
@@ -174,7 +177,9 @@ public class MainActivity extends AppCompatActivity {
     {
         Intent myIntent = new Intent(this, FutureForecast.class);
         myIntent.putExtra("APIKEY", APIKEY); //Optional parameters
+        myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         this.startActivity(myIntent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     private void initializeLocationManager(){

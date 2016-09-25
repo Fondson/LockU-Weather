@@ -60,7 +60,7 @@ public class Day {
         SimpleDateFormat df = new SimpleDateFormat("EEEE");
         String date = df.format(dateTime);
         Log.d("Day", date);
-        return "date";
+        return date;
     }
 
 }
