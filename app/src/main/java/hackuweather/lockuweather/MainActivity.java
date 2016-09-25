@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
     public void getKey() {
         // initialize the api with key and parameters
         String forecastURL = "\n" +
-                "http://api.accuweather.com/locations/v1/cities/geoposition/search.json?q=" + mLatitude +
+                "http://apidev.accuweather.com/locations/v1/cities/geoposition/search.json?q=" + mLatitude +
                 "," + mLongitude + "&apikey=" + APIKEY;
 
         if (isNetworkAvailable()) {
@@ -312,6 +312,7 @@ public class MainActivity extends AppCompatActivity {
                         // can't remember what this does
                         if (response.isSuccessful()) {
                             mLocationKey = getLocationKey(jsonData);
+                            Log.d("longlat", "onResponse: "+mLocationKey);
                         } else {
                             alertUserAboutError();
                         }
@@ -340,6 +341,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateDisplay() throws IOException {
+        Log.d("longlat", "updateDisplay: " + "" + mForecast.getCurrent().getTemperature() + "°C");
         currentTemp.setText("" + mForecast.getCurrent().getTemperature() + "°C");
         weatherIcon.setImageResource(mForecast.getCurrent().getIconId());
         backDrop.setImageBitmap(mForecast.getCurrent().getPhotoBitmap());

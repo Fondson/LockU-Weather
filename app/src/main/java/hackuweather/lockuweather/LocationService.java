@@ -20,7 +20,7 @@ public class LocationService extends Service {
     private double mLatitude;
 
     private static float LOCATION_REFRESH_DISTANCE = 0;
-    private static long LOCATION_REFRESH_TIME = 0;
+    private static long LOCATION_REFRESH_TIME = 5000;
 
     public IBinder onBind(Intent intent) {
         return null;
@@ -47,10 +47,11 @@ public class LocationService extends Service {
             //your code here
             mLatitude = location.getLatitude();
             mLongitude = location.getLongitude();
-            toggleRefreshTime();
+            //toggleRefreshTime();
             Log.d("longlat", Double.toString(mLatitude) + " " + Double.toString(mLongitude));
             MainActivityContainer.getMainActivity().setLatitude(mLatitude);
             MainActivityContainer.getMainActivity().setLongitude(mLongitude);
+            MainActivityContainer.getMainActivity().getKey();
             MainActivityContainer.getMainActivity().getDays();
             MainActivityContainer.getMainActivity().getCurrent();
 
